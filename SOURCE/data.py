@@ -19,16 +19,17 @@ class DATA():
 
         if(dirname == 'test'):
           ab_scale3 = np.load('/content/input/ab/ab/ab3.npy')
-          self.ab_scale = ab_scale3[3000:3300]
-          self.gray_scale = gray_scale[23000:23300]
+          self.ab_scale = ab_scale3[3000:3020]
+          self.gray_scale = gray_scale[23000:23020]
           del ab_scale3
         elif(dirname == 'train'):
-          ab_scale1 = np.load('/content/input/ab/ab/ab1.npy')
-          ab_scale2 = np.load('/content/input/ab/ab/ab2.npy')
-          self.ab_scale = np.concatenate((ab_scale1, ab_scale2), 0)
-          del ab_scale1
-          del ab_scale2
-          self.gray_scale = gray_scale[:20000]
+          # ab_scale1 = np.load('/content/input/ab/ab/ab1.npy')
+          # ab_scale2 = np.load('/content/input/ab/ab/ab2.npy')
+          # self.ab_scale = np.concatenate((ab_scale1, ab_scale2), 0)
+          # del ab_scale1
+          # del ab_scale2
+          self.ab_scale = np.load('/content/input/ab/ab/ab1.npy')
+          self.gray_scale = gray_scale[:10000]
         self.dir_path = os.path.join(config.DATA_DIR, dirname)
         self.filelist = range(config.NUM_EPOCHS*config.BATCH_SIZE)
         self.batch_size = config.BATCH_SIZE
