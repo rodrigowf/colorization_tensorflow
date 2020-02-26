@@ -1,0 +1,3 @@
+2020-02-26 02:08:04.533784
+Use Pretrained Weights: False
+Pretrained Model: Dogsmodel1_100
