@@ -42,7 +42,7 @@ class DATA():
         return np.reshape(labimg[:,:,0], (config.IMAGE_SIZE, config.IMAGE_SIZE, 1)), labimg[:, :, 1:]
 
     def generate_batch(self):
-        batch = self.gray_scale[self.data_index:self.data_index+self.batch_size]/255
+        batch = np.reshape(self.gray_scale[self.data_index:self.data_index+self.batch_size]/255, (self.batch_size, config.IMAGE_SIZE, config.IMAGE_SIZE, 1))
         labels = self.ab_scale[self.data_index:self.data_index+self.batch_size]/255
         filelist = range(self.data_index, self.data_index+self.batch_size)
         self.data_index = self.data_index + self.batch_size
