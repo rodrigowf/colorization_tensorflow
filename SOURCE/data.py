@@ -10,14 +10,29 @@ import cv2
 import os
 import config
 
+gray_scale = np.load('/content/input/l/gray_scale.npy')
+print(gray_scale.shape)  # (25000, 224, 224) from 0 to 255
 
 class DATA():
 
     def __init__(self, dirname):
+
+        if(dirname == 'test'):
+          ab_scale3 = np.load('/content/input/ab/ab/ab3.npy')
+          self.ab_scale = ab_scale3[3000:3300]
+          self.gray_scale = gray_scale[23000:23300]
+          del ab_scale3
+        elif(dirname == 'train'):
+          ab_scale1 = np.load('/content/input/ab/ab/ab1.npy')
+          ab_scale2 = np.load('/content/input/ab/ab/ab2.npy')
+          self.ab_scale = np.concatenate((ab_scale1, ab_scale2), 0)
+          del ab_scale1
+          del ab_scale2
+          self.gray_scale = gray_scale[:20000]
         self.dir_path = os.path.join(config.DATA_DIR, dirname)
-        self.filelist = os.listdir(self.dir_path)
+        self.filelist = range(config.NUM_EPOCHS*config.BATCH_SIZE)
         self.batch_size = config.BATCH_SIZE
-        self.size = len(self.filelist)
+        self.size = self.ab_scale.shape[0]
         self.data_index = 0
 
     def read_img(self, filename):
@@ -27,16 +42,8 @@ class DATA():
         return np.reshape(labimg[:,:,0], (config.IMAGE_SIZE, config.IMAGE_SIZE, 1)), labimg[:, :, 1:]
 
     def generate_batch(self):
-        batch = []
-        labels = []
-        filelist = []
-        for i in range(self.batch_size):
-            filename = os.path.join(config.DATA_DIR, self.dir_path, self.filelist[self.data_index])
-            filelist.append(self.filelist[self.data_index])
-            greyimg, colorimg = self.read_img(filename)
-            batch.append(greyimg)
-            labels.append(colorimg)
-            self.data_index = (self.data_index + 1) % self.size
-        batch = np.asarray(batch)/255
-        labels = np.asarray(labels)/255
+        batch = self.gray_scale[self.data_index:self.data_index+self.batch_size]/255
+        labels = self.ab_scale[self.data_index:self.data_index+self.batch_size]/255
+        filelist = range(self.data_index, self.data_index+self.batch_size)
+        self.data_index = self.data_index + self.batch_size
         return batch, labels, filelist

@@ -12,7 +12,7 @@ import config
 class Layer():
 
     def __init__(self, shape, stddev, value):
-        self.weights = tf.Variable(tf.truncated_normal(shape=shape, stddev=stddev))
+        self.weights = tf.Variable(tf.random.truncated_normal(shape=shape, stddev=stddev))
         self.biases = tf.Variable(tf.constant(value=value, shape=[shape[-1]]))
 
     def feed_forward(self, input_data, stride=None):

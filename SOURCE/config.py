@@ -8,8 +8,8 @@ Created on Thu Feb  8 17:16:29 2018
 import os
 
 # DIRECTORY INFORMATION
-DATASET = "Dogs"
-ROOT_DIR = os.path.abspath('../')
+DATASET = "flickr"
+ROOT_DIR = '/content/colorization_tensorflow/'
 DATA_DIR = os.path.join(ROOT_DIR, 'DATASET/'+DATASET+'/')
 OUT_DIR = os.path.join(ROOT_DIR, 'RESULT/'+DATASET+'/')
 MODEL_DIR = os.path.join(ROOT_DIR, 'MODEL/')
@@ -20,7 +20,7 @@ TEST_DIR = "test"
 
 # DATA INFORMATION
 IMAGE_SIZE = 224
-BATCH_SIZE = 1
+BATCH_SIZE = 15
 
 # RANDOM NUMBER GENERATOR INFORMATION
 SEED = 128
@@ -28,4 +28,4 @@ SEED = 128
 # TRAINING INFORMATION
 USE_PRETRAINED = False
 PRETRAINED = "Dogsmodel1_100"
-NUM_EPOCHS = 100
+NUM_EPOCHS = 50

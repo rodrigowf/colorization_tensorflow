@@ -24,15 +24,15 @@ def reconstruct(batchX, predictedY, filelist):
     for i in range(config.BATCH_SIZE):
         result = np.concatenate((batchX[i], predictedY[i]), axis=2)
         result = cv2.cvtColor(result, cv2.COLOR_Lab2BGR)
-        save_path = os.path.join(config.OUT_DIR, filelist[i][:-4] + "reconstructed.jpg")
+        save_path = os.path.join(config.OUT_DIR, filelist[i] + "_reconstructed.jpg")
         cv2.imwrite(save_path, result)
 
 
 class MODEL():
 
     def __init__(self):
-        self.inputs = tf.placeholder(shape=[config.BATCH_SIZE, config.IMAGE_SIZE, config.IMAGE_SIZE, 1], dtype=tf.float32)
-        self.labels = tf.placeholder(shape=[config.BATCH_SIZE, config.IMAGE_SIZE, config.IMAGE_SIZE, 2], dtype=tf.float32)
+        self.inputs = tf.compat.v1.placeholder(shape=[config.BATCH_SIZE, config.IMAGE_SIZE, config.IMAGE_SIZE, 1], dtype=tf.float32)
+        self.labels = tf.compat.v1.placeholder(shape=[config.BATCH_SIZE, config.IMAGE_SIZE, config.IMAGE_SIZE, 2], dtype=tf.float32)
         self.loss = None
         self.output = None
 
@@ -91,27 +91,27 @@ class MODEL():
         colorization_level_conv1 = neural_network.Convolution_Layer(shape=[3, 3, 256, 128], stddev=0.1, value=0.1)
         h = colorization_level_conv1.feed_forward(input_data=h, stride=[1, 1, 1, 1])
 
-        h = tf.image.resize_images(h, [56, 56], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+        h = tf.image.resize(h, [56, 56], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
         colorization_level_conv2 = neural_network.Convolution_Layer(shape=[3, 3, 128, 64], stddev=0.1, value=0.1)
         h = colorization_level_conv2.feed_forward(input_data=h, stride=[1, 1, 1, 1])
 
         colorization_level_conv3 = neural_network.Convolution_Layer(shape=[3, 3, 64, 64], stddev=0.1, value=0.1)
         h = colorization_level_conv3.feed_forward(input_data=h, stride=[1, 1, 1, 1])
 
-        h = tf.image.resize_images(h, [112, 112], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+        h = tf.image.resize(h, [112, 112], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
         colorization_level_conv4 = neural_network.Convolution_Layer(shape=[3, 3, 64, 32], stddev=0.1, value=0.1)
         h = colorization_level_conv4.feed_forward(input_data=h, stride=[1, 1, 1, 1])
 
         output_layer = neural_network.Output_Layer(shape=[3, 3, 32, 2], stddev=0.1, value=0.1)
         logits = output_layer.feed_forward(input_data=h, stride=[1, 1, 1, 1])
 
-        self.output = tf.image.resize_images(logits, [224, 224], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
-        self.loss = tf.reduce_mean(tf.squared_difference(self.labels, self.output))
+        self.output = tf.image.resize(logits, [224, 224], method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
+        self.loss = tf.reduce_mean(tf.math.squared_difference(self.labels, self.output))
 
     def train(self, data, log):
-        optimizer = tf.train.AdamOptimizer(1e-4).minimize(self.loss)
-        saver = tf.train.Saver()
-        with tf.Session() as session:
+        optimizer = tf.compat.v1.train.AdamOptimizer(1e-4).minimize(self.loss)
+        saver = tf.compat.v1.train.Saver()
+        with tf.compat.v1.Session() as session:
             session.run(tf.global_variables_initializer())
             print('All variables Initialized')
             if config.USE_PRETRAINED:
